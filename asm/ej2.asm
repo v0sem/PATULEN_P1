@@ -12,7 +12,8 @@ main:
 	push dword _b1
 	call scan_boolean
 	add esp, 4
-	push dword _b1
+	mov eax, _b1
+	push dword eax
 	pop dword ecx
 	mov dword ecx, [ecx]
 	mov dword eax, 0
@@ -29,7 +30,8 @@ next0:
 	call print_boolean
 	add esp, 4
 	call print_endofline
-	push dword _b1
+	mov eax, _b1
+	push dword eax
 	pop dword ecx
 	mov dword ecx, [ecx]
 	mov dword eax, 0

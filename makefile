@@ -1,14 +1,13 @@
 CC = gcc
 CFLAGS = -Wall
-EJS = ej1 ej2
+EXE = ej1 ej2 ej3 ej4 ej5 ej6 ej7
 
-all: $(EJS)
+.PHONY: all clean
 
-clean:
-	rm -f *.o $(EJS)
+all: $(EXE)
 
-# genera EJS enlazados con generacion.o
-$(EJS): % : %.o generacion.o
+# genera EXE enlazados con generacion.o
+$(EXE): % : %.o generacion.o
 	$(CC) $(CFLAGS) -o generador_$@ $@.o generacion.o
 	rm $<
 	./generador_$@ asm/$@.asm
@@ -20,3 +19,6 @@ $(EJS): % : %.o generacion.o
 
 generacion.o: generacion.c generacion.h
 	gcc -c generacion.c
+
+clean:
+	rm -f *.o $(EXE)

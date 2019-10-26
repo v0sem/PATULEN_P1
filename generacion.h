@@ -2,6 +2,8 @@
 #define GENERACION_H
 #include <stdio.h>
 
+#define MAX_ETIQUETAS 256
+
 /* Declaraciones de tipos de datos del compilador */
 #define ENTERO 0
 #define BOOLEANO 1

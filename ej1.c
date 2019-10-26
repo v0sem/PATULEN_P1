@@ -1,14 +1,6 @@
-#include <stdio.h>
 #include "generacion.h"
 
 int main(int argc, char **argv) {
-	/*
-	int x, y, z;
-	x = 8;
-	scanf y;
-	z = x + y;
-	printf z;
-	*/
 	FILE *salida;
 
 	if (argc != 2) {
@@ -20,9 +12,11 @@ int main(int argc, char **argv) {
 
 	escribir_subseccion_data(salida);
 	escribir_cabecera_bss(salida);
+
 	declarar_variable(salida, "x", ENTERO, 1);
 	declarar_variable(salida, "y", ENTERO, 1);
 	declarar_variable(salida, "z", ENTERO, 1);
+
 	escribir_segmento_codigo(salida);
 	escribir_inicio_main(salida);
 

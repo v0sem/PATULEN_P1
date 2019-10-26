@@ -66,10 +66,11 @@ void escribir_fin(FILE *fpasm) {
 
 void escribir_operando(FILE *fpasm, char *nombre, int es_variable) {
 	if (es_variable == 1) {
-		fprintf(fpasm, "\tpush dword _%s\n", nombre);
+		fprintf(fpasm, "\tmov eax, _%s\n", nombre);
 	} else {
-		fprintf(fpasm, "\tpush dword %s\n", nombre);
+		fprintf(fpasm, "\tmov eax, %s\n", nombre);
 	}
+	fprintf(fpasm, "\tpush dword eax\n");
 }
 
 void asignar(FILE *fpasm, char *nombre, int es_variable) {

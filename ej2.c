@@ -1,22 +1,19 @@
-#include <stdio.h>
 #include "generacion.h"
 
 int main(int argc, char **argv) {
-	/*
-	boolean b1;
-	scanf b1;
-	printf !b1;
-	printf !!b1;
-	*/
 	FILE *salida;
 	int cuantos_no = 0;
+
 	if (argc != 2) {
 		fprintf(stdout, "ERROR POCOS ARGUMENTOS\n");
 		return -1;
 	}
+
 	salida = fopen(argv[1], "w");
+
 	escribir_subseccion_data(salida);
 	escribir_cabecera_bss(salida);
+
 	declarar_variable(salida, "b1", BOOLEANO, 1);
 
 	escribir_segmento_codigo(salida);
