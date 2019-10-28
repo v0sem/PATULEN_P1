@@ -14,17 +14,17 @@ main:
 	add esp, 4
 	mov eax, _b1
 	push dword eax
-	pop dword ecx
-	mov dword ecx, [ecx]
-	mov dword eax, 0
-	cmp eax, ecx
+	pop dword eax
+	mov dword eax, [eax]
+	mov dword ecx, 0
+	cmp ecx, eax
 	je near no0
-	mov dword eax, 0
-	push dword eax
+	mov dword ecx, 0
+	push dword ecx
 	jmp near next0
 no0:
-	mov dword eax, 1
-	push dword eax
+	mov dword ecx, 1
+	push dword ecx
 next0:
 	push dword eax
 	call print_boolean
@@ -32,28 +32,28 @@ next0:
 	call print_endofline
 	mov eax, _b1
 	push dword eax
-	pop dword ecx
-	mov dword ecx, [ecx]
-	mov dword eax, 0
-	cmp eax, ecx
+	pop dword eax
+	mov dword eax, [eax]
+	mov dword ecx, 0
+	cmp ecx, eax
 	je near no1
-	mov dword eax, 0
-	push dword eax
+	mov dword ecx, 0
+	push dword ecx
 	jmp near next1
 no1:
-	mov dword eax, 1
-	push dword eax
+	mov dword ecx, 1
+	push dword ecx
 next1:
-	pop dword ecx
-	mov dword eax, 0
-	cmp eax, ecx
+	pop dword eax
+	mov dword ecx, 0
+	cmp ecx, eax
 	je near no2
-	mov dword eax, 0
-	push dword eax
+	mov dword ecx, 0
+	push dword ecx
 	jmp near next2
 no2:
-	mov dword eax, 1
-	push dword eax
+	mov dword ecx, 1
+	push dword ecx
 next2:
 	push dword eax
 	call print_boolean
