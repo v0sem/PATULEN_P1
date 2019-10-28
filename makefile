@@ -11,7 +11,7 @@ $(EXE): % : %.o generacion.o
 	$(CC) $(CFLAGS) -o generador_$@ $@.o generacion.o
 	rm $<
 	./generador_$@ asm/$@.asm
-	rm generador_$@
+	rm generador_git$@
 	nasm -g -o asm/$@.o -f elf32 asm/$@.asm
 	gcc -m32 -o $@ asm/$@.o lib/alfalib.o
 	rm asm/$<

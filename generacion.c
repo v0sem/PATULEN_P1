@@ -155,20 +155,24 @@ void cambiar_signo(FILE *fpasm, int es_variable) {
 
 void no(FILE *fpasm, int es_variable, int cuantos_no) {
 
-	// TODO COMPRUEBA
-	es_variable_fun(fpasm, es_variable);
+	// No podemos usar funcion auxiliar porque funciona con eax y lo necesitamos para pushear en pila
+	fprintf(fpasm, "\tpop dword ecx\n");
 
-	fprintf(fpasm, "\tmov dword ecx, 0\n");
-	fprintf(fpasm, "\tcmp ecx, eax\n");
+	if (es_variable == 1) {
+		fprintf(fpasm, "\tmov dword ecx, [ecx]\n");
+	}
+
+	fprintf(fpasm, "\tmov dword eax, 0\n");
+	fprintf(fpasm, "\tcmp eax, ecx\n");
 	fprintf(fpasm, "\tje near no%d\n", cuantos_no);
 
-	fprintf(fpasm, "\tmov dword ecx, 0\n");
-	fprintf(fpasm, "\tpush dword ecx\n");
+	fprintf(fpasm, "\tmov dword eax, 0\n");
+	fprintf(fpasm, "\tpush dword eax\n");
 	fprintf(fpasm, "\tjmp near next%d\n", cuantos_no);
 
 	fprintf(fpasm, "no%d:\n", cuantos_no);
-	fprintf(fpasm, "\tmov dword ecx, 1\n");
-	fprintf(fpasm, "\tpush dword ecx\n");
+	fprintf(fpasm, "\tmov dword eax, 1\n");
+	fprintf(fpasm, "\tpush dword eax\n");
 
 	fprintf(fpasm, "next%d:\n", cuantos_no);
 }
@@ -384,16 +388,16 @@ void retornarFuncion(FILE *fd_asm, int es_variable) {
 }
 
 void escribirParametro(FILE *fpasm, int pos_parametro, int num_total_parametros) {
-	int aux = 0;
-	aux = 4 * (1 + (num_total_parametros - pos_parametro));
-	fprintf(fpasm, "\tlea eax, [ebp + %d]\n", aux);
+	int a = 0;
+	a = 4 * (1 + (num_total_parametros - pos_parametro));
+	fprintf(fpasm, "\tlea eax, [ebp + %d]\n", a);
 	fprintf(fpasm, "\tpush dword eax\n");
 }
 
 void escribirVariableLocal(FILE *fpasm, int posicion_variable_local) {
-	int aux = 0;
-	aux = 4 * posicion_variable_local;
-	fprintf(fpasm, "\tlea eax, [ebp - %d]\n", aux);
+	int a = 0;
+	a = 4 * posicion_variable_local;
+	fprintf(fpasm, "\tlea eax, [ebp - %d]\n", a);
 	fprintf(fpasm, "\tpush dword eax\n");
 }
 
