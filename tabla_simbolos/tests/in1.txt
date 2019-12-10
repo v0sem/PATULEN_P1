@@ -1,0 +1,5 @@
+#inserta 'a' (exito y fallo). busca 'a' (exito) y 'b' (fallo)
+a 5
+a 2
+a
+b

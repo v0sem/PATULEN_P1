@@ -1,0 +1,32 @@
+#inserta 'uno', 'dos', 'tres' globales (exito)
+uno 1
+dos 2
+tres 3
+#abre ambito 'funcion1', inserta 'cuatro' local, busca 'funcion1' (exito)
+funcion1 -10
+cuatro 4
+cuatro
+funcion1
+#dentro del ambito 'funcion1' abre ambito 'funcion2' (fallo)
+funcion2 -20
+funcion2
+cierre -999
+funcion2
+#abre ambito 'funcion2', inserta 'cinco', 'seis' locales (exito)
+funcion2 -20
+cinco 5
+seis 6
+seis
+cinco
+#dentro del ambito 'funcion2' busca 'funcion1' (exito, se inserto globalmente)
+funcion1
+cierre -999
+#busquedas: exito, exito, exito, exito, fallo, fallo, fallo, fallo
+uno
+dos
+funcion1
+funcion2
+funcion3
+cuatro
+cinco
+seis

@@ -1,0 +1,10 @@
+a
+b
+ambito
+p
+p 3
+a 5
+cierre
+a 5
+b 2
+p -1

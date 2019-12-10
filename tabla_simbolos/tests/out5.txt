@@ -1,0 +1,26 @@
+uno
+dos
+tres
+funcion1
+cuatro
+cuatro 4
+funcion1 -10
+-1 funcion2
+funcion2 -1
+cierre
+funcion2 -1
+funcion2
+cinco
+seis
+seis 6
+cinco 5
+funcion1 -10
+cierre
+uno 1
+dos 2
+funcion1 -10
+funcion2 -20
+funcion3 -1
+cuatro -1
+cinco -1
+seis -1

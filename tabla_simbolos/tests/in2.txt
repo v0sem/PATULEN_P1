@@ -1,0 +1,13 @@
+#inserta 'a', 'b' globales
+a 5
+b 2
+#abre ambito, inserta 'p' local y busca 'a' (exito)
+ambito -10
+p 3
+p
+a
+cierre -999
+#fuera de ambito busca 'a', 'b' (exito) y 'p' (fallo)
+a
+b
+p
