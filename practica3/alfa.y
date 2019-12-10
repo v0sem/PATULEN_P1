@@ -1,11 +1,20 @@
 %{
 	#include <stdio.h>
 	#include <stdlib.h>
+	#include "y.tab.h"
+
 	extern FILE* out;
 	extern int row;
 	extern int col;
 	extern int yyleng;
+	extern int yylex();
+	extern int morferr;
 
+	int yyerror(char* s){
+		if(morferr!=1)
+			fprintf(stderr, "****Error sintactico en [lin %d col %d]\n", row, col-yyleng);
+		return -1;
+	}
 %}
 
 
@@ -139,9 +148,3 @@ constante_entera: TOK_CONSTANTE_ENTERA {fprintf(out, ";R104:\t<constante_entera>
 identificador: TOK_IDENTIFICADOR {fprintf(out, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");}
 ;
 %%
-
-int yyerror(char* s){
-		if(yylval != -1)
-			fprintf(stderr, "****Error sintactico en [lin %d col %d]\n", row, col-yyleng);
-		return -1;
-	}

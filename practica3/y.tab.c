@@ -66,13 +66,22 @@
 
 	#include <stdio.h>
 	#include <stdlib.h>
+	#include "y.tab.h"
+
 	extern FILE* out;
 	extern int row;
 	extern int col;
 	extern int yyleng;
+	extern int yylex();
+	extern int morferr;
 
+	int yyerror(char* s){
+		if(morferr!=1)
+			fprintf(stderr, "****Error sintactico en [lin %d col %d]\n", row, col-yyleng);
+		return -1;
+	}
 
-#line 76 "y.tab.c" /* yacc.c:339  */
+#line 85 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -205,7 +214,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 209 "y.tab.c" /* yacc.c:358  */
+#line 218 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -506,14 +515,14 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    37,    37,    39,    40,    42,    44,    45,    47,    49,
-      50,    52,    54,    55,    57,    58,    60,    62,    63,    65,
-      66,    68,    70,    71,    73,    74,    76,    77,    79,    80,
-      81,    82,    84,    85,    87,    88,    90,    92,    93,    95,
-      97,    99,   101,   103,   104,   105,   106,   107,   108,   109,
-     110,   111,   112,   113,   114,   115,   116,   118,   119,   121,
-     122,   124,   125,   126,   127,   128,   129,   131,   132,   134,
-     135,   137,   139
+       0,    46,    46,    48,    49,    51,    53,    54,    56,    58,
+      59,    61,    63,    64,    66,    67,    69,    71,    72,    74,
+      75,    77,    79,    80,    82,    83,    85,    86,    88,    89,
+      90,    91,    93,    94,    96,    97,    99,   101,   102,   104,
+     106,   108,   110,   112,   113,   114,   115,   116,   117,   118,
+     119,   120,   121,   122,   123,   124,   125,   127,   128,   130,
+     131,   133,   134,   135,   136,   137,   138,   140,   141,   143,
+     144,   146,   148
 };
 #endif
 
@@ -1397,433 +1406,433 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 37 "alfa.y" /* yacc.c:1646  */
+#line 46 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n");}
-#line 1403 "y.tab.c" /* yacc.c:1646  */
+#line 1412 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 39 "alfa.y" /* yacc.c:1646  */
+#line 48 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R2:\t<declaraciones> ::= <declaracion>\n");}
-#line 1409 "y.tab.c" /* yacc.c:1646  */
+#line 1418 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 40 "alfa.y" /* yacc.c:1646  */
+#line 49 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R3:\t<declaraciones> ::= <declaracion> <declaraciones>\n");}
-#line 1415 "y.tab.c" /* yacc.c:1646  */
+#line 1424 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 42 "alfa.y" /* yacc.c:1646  */
+#line 51 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R4:\t<declaracion> ::= <clase> <identificadores> ;\n");}
-#line 1421 "y.tab.c" /* yacc.c:1646  */
+#line 1430 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 44 "alfa.y" /* yacc.c:1646  */
+#line 53 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R5:\t<clase> ::= <clase_escalar>\n");}
-#line 1427 "y.tab.c" /* yacc.c:1646  */
+#line 1436 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 45 "alfa.y" /* yacc.c:1646  */
+#line 54 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R7:\t<clase> ::= <clase_vector>\n");}
-#line 1433 "y.tab.c" /* yacc.c:1646  */
+#line 1442 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 47 "alfa.y" /* yacc.c:1646  */
+#line 56 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R9:\t<clase_escalar> ::= <tipo>\n");}
-#line 1439 "y.tab.c" /* yacc.c:1646  */
+#line 1448 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 49 "alfa.y" /* yacc.c:1646  */
+#line 58 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R10:\t<tipo> ::= int\n");}
-#line 1445 "y.tab.c" /* yacc.c:1646  */
+#line 1454 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 50 "alfa.y" /* yacc.c:1646  */
+#line 59 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R11:\t<tipo> ::= boolean\n");}
-#line 1451 "y.tab.c" /* yacc.c:1646  */
+#line 1460 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 52 "alfa.y" /* yacc.c:1646  */
+#line 61 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R15:\t<clase_vector> ::= array <tipo> [<constante_entera>]\n");}
-#line 1457 "y.tab.c" /* yacc.c:1646  */
+#line 1466 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 54 "alfa.y" /* yacc.c:1646  */
+#line 63 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R18:\t<identificadores> ::= <identificador>\n");}
-#line 1463 "y.tab.c" /* yacc.c:1646  */
+#line 1472 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 55 "alfa.y" /* yacc.c:1646  */
+#line 64 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R19:\t<identificadores> ::= <identificador> , <identificadores>\n");}
-#line 1469 "y.tab.c" /* yacc.c:1646  */
+#line 1478 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 57 "alfa.y" /* yacc.c:1646  */
+#line 66 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R:20:\t<funciones> ::= <funcion> <funciones>\n");}
-#line 1475 "y.tab.c" /* yacc.c:1646  */
+#line 1484 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 58 "alfa.y" /* yacc.c:1646  */
+#line 67 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R21:\t<funciones> ::= \n");}
-#line 1481 "y.tab.c" /* yacc.c:1646  */
+#line 1490 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 60 "alfa.y" /* yacc.c:1646  */
+#line 69 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n");}
-#line 1487 "y.tab.c" /* yacc.c:1646  */
+#line 1496 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 62 "alfa.y" /* yacc.c:1646  */
+#line 71 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R23:\t<parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>\n");}
-#line 1493 "y.tab.c" /* yacc.c:1646  */
+#line 1502 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 63 "alfa.y" /* yacc.c:1646  */
+#line 72 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R24:\t<parametros_funcion> ::=\n");}
-#line 1499 "y.tab.c" /* yacc.c:1646  */
+#line 1508 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 65 "alfa.y" /* yacc.c:1646  */
+#line 74 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R25:\t<resto_parametros_funcion> ::= ; <parametro_funcion> <resto_parametros_funcion>\n");}
-#line 1505 "y.tab.c" /* yacc.c:1646  */
+#line 1514 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 66 "alfa.y" /* yacc.c:1646  */
+#line 75 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R26:\t<resto_parametros_funcion> ::=\n");}
-#line 1511 "y.tab.c" /* yacc.c:1646  */
+#line 1520 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 68 "alfa.y" /* yacc.c:1646  */
+#line 77 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R27:\t<parametro_funcion> ::= <tipo> <identificador>\n");}
-#line 1517 "y.tab.c" /* yacc.c:1646  */
+#line 1526 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 70 "alfa.y" /* yacc.c:1646  */
+#line 79 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R28:\t<declaraciones_funcion> ::= <declaraciones>\n");}
-#line 1523 "y.tab.c" /* yacc.c:1646  */
+#line 1532 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 71 "alfa.y" /* yacc.c:1646  */
+#line 80 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R29:\t<declaraciones_funcion> ::=\n");}
-#line 1529 "y.tab.c" /* yacc.c:1646  */
+#line 1538 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 73 "alfa.y" /* yacc.c:1646  */
+#line 82 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R30:\t<sentencias> ::= <sentencia>\n");}
-#line 1535 "y.tab.c" /* yacc.c:1646  */
+#line 1544 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 74 "alfa.y" /* yacc.c:1646  */
+#line 83 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R31:\t<sentencias> ::= <sentencia> <sentencias>\n");}
-#line 1541 "y.tab.c" /* yacc.c:1646  */
+#line 1550 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 76 "alfa.y" /* yacc.c:1646  */
+#line 85 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R32:\t<sentencia> ::= <sentencia_simple> ;\n");}
-#line 1547 "y.tab.c" /* yacc.c:1646  */
+#line 1556 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 77 "alfa.y" /* yacc.c:1646  */
+#line 86 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R33:\t<sentencia_simple> ::= <bloque>\n");}
-#line 1553 "y.tab.c" /* yacc.c:1646  */
+#line 1562 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 79 "alfa.y" /* yacc.c:1646  */
+#line 88 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R34:\t<sentencia_simple> ::= <asignacion>\n");}
-#line 1559 "y.tab.c" /* yacc.c:1646  */
+#line 1568 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 80 "alfa.y" /* yacc.c:1646  */
+#line 89 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R35:\t<sentencia_simple> ::= <lectura>\n");}
-#line 1565 "y.tab.c" /* yacc.c:1646  */
+#line 1574 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 81 "alfa.y" /* yacc.c:1646  */
+#line 90 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R36:\t<sentencia_simple> ::= <escritura>\n");}
-#line 1571 "y.tab.c" /* yacc.c:1646  */
+#line 1580 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 82 "alfa.y" /* yacc.c:1646  */
+#line 91 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R38:\t<sentencia_simple> ::= <retorno_funcion>\n");}
-#line 1577 "y.tab.c" /* yacc.c:1646  */
+#line 1586 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 84 "alfa.y" /* yacc.c:1646  */
+#line 93 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R40:\t<bloque> ::= <condicional>\n");}
-#line 1583 "y.tab.c" /* yacc.c:1646  */
+#line 1592 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 85 "alfa.y" /* yacc.c:1646  */
+#line 94 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R41:\t<bloque> ::= <bucle>\n");}
-#line 1589 "y.tab.c" /* yacc.c:1646  */
+#line 1598 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 87 "alfa.y" /* yacc.c:1646  */
+#line 96 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");}
-#line 1595 "y.tab.c" /* yacc.c:1646  */
+#line 1604 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 88 "alfa.y" /* yacc.c:1646  */
+#line 97 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");}
-#line 1601 "y.tab.c" /* yacc.c:1646  */
+#line 1610 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 90 "alfa.y" /* yacc.c:1646  */
+#line 99 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n");}
-#line 1607 "y.tab.c" /* yacc.c:1646  */
+#line 1616 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 92 "alfa.y" /* yacc.c:1646  */
+#line 101 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R50:\t<condicional> ::= if ( <exp> ) { <sentencias> }\n");}
-#line 1613 "y.tab.c" /* yacc.c:1646  */
+#line 1622 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 93 "alfa.y" /* yacc.c:1646  */
+#line 102 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R51:\t<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }\n");}
-#line 1619 "y.tab.c" /* yacc.c:1646  */
+#line 1628 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 95 "alfa.y" /* yacc.c:1646  */
+#line 104 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R52:\t<bucle> ::= while ( <exp> ) { <sentencias> }\n");}
-#line 1625 "y.tab.c" /* yacc.c:1646  */
+#line 1634 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 97 "alfa.y" /* yacc.c:1646  */
+#line 106 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R54:\t<lectura> ::= scanf <identificador>\n");}
-#line 1631 "y.tab.c" /* yacc.c:1646  */
+#line 1640 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 99 "alfa.y" /* yacc.c:1646  */
+#line 108 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R56:\t<escritura> ::= printf <exp>\n");}
-#line 1637 "y.tab.c" /* yacc.c:1646  */
+#line 1646 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 101 "alfa.y" /* yacc.c:1646  */
+#line 110 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R61:\t<retorno_funcion> ::= return <exp>\n");}
-#line 1643 "y.tab.c" /* yacc.c:1646  */
+#line 1652 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 103 "alfa.y" /* yacc.c:1646  */
+#line 112 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R72:\t<exp> ::= <exp> + <exp>\n");}
-#line 1649 "y.tab.c" /* yacc.c:1646  */
+#line 1658 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 104 "alfa.y" /* yacc.c:1646  */
+#line 113 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R73:\t<exp> ::= <exp> - <exp>\n");}
-#line 1655 "y.tab.c" /* yacc.c:1646  */
+#line 1664 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 105 "alfa.y" /* yacc.c:1646  */
+#line 114 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R74:\t<exp> ::= <exp> / <exp>\n");}
-#line 1661 "y.tab.c" /* yacc.c:1646  */
+#line 1670 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 106 "alfa.y" /* yacc.c:1646  */
+#line 115 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R75:\t<exp> ::= <exp> * <exp>\n");}
-#line 1667 "y.tab.c" /* yacc.c:1646  */
+#line 1676 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 107 "alfa.y" /* yacc.c:1646  */
+#line 116 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R76:\t<exp> ::= - <exp>\n");}
-#line 1673 "y.tab.c" /* yacc.c:1646  */
+#line 1682 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 108 "alfa.y" /* yacc.c:1646  */
+#line 117 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R77:\t<exp> ::= <exp> && <exp>\n");}
-#line 1679 "y.tab.c" /* yacc.c:1646  */
+#line 1688 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 109 "alfa.y" /* yacc.c:1646  */
+#line 118 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R78:\t<exp> ::= <exp> || <exp>\n");}
-#line 1685 "y.tab.c" /* yacc.c:1646  */
+#line 1694 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 110 "alfa.y" /* yacc.c:1646  */
+#line 119 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R79:\t<exp> ::= ! <exp>\n");}
-#line 1691 "y.tab.c" /* yacc.c:1646  */
+#line 1700 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 111 "alfa.y" /* yacc.c:1646  */
+#line 120 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R80:\t<exp> ::= <identificador>\n");}
-#line 1697 "y.tab.c" /* yacc.c:1646  */
+#line 1706 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 112 "alfa.y" /* yacc.c:1646  */
+#line 121 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R81:\t<exp> ::= <constante>\n");}
-#line 1703 "y.tab.c" /* yacc.c:1646  */
+#line 1712 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 113 "alfa.y" /* yacc.c:1646  */
+#line 122 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R82:\t<exp> ::= ( <exp> )\n");}
-#line 1709 "y.tab.c" /* yacc.c:1646  */
+#line 1718 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 114 "alfa.y" /* yacc.c:1646  */
+#line 123 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R83:\t<exp> ::= ( <comparacion> )\n");}
-#line 1715 "y.tab.c" /* yacc.c:1646  */
+#line 1724 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 115 "alfa.y" /* yacc.c:1646  */
+#line 124 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R85:\t<exp> ::= <elemento_vector>\n");}
-#line 1721 "y.tab.c" /* yacc.c:1646  */
+#line 1730 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 116 "alfa.y" /* yacc.c:1646  */
+#line 125 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R88:\t<exp> ::= <identificaor> ( <lista_expresiones> )\n");}
-#line 1727 "y.tab.c" /* yacc.c:1646  */
+#line 1736 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 118 "alfa.y" /* yacc.c:1646  */
+#line 127 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");}
-#line 1733 "y.tab.c" /* yacc.c:1646  */
+#line 1742 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 119 "alfa.y" /* yacc.c:1646  */
+#line 128 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R90:\t<lista_expresiones> ::=\n");}
-#line 1739 "y.tab.c" /* yacc.c:1646  */
+#line 1748 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 121 "alfa.y" /* yacc.c:1646  */
+#line 130 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R91:\t<resto_lista_expresiones> ::= , <exp> <resto_lista_expresiones>\n");}
-#line 1745 "y.tab.c" /* yacc.c:1646  */
+#line 1754 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 122 "alfa.y" /* yacc.c:1646  */
+#line 131 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R92:\t<resto_lista_expresiones> ::= \n");}
-#line 1751 "y.tab.c" /* yacc.c:1646  */
+#line 1760 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 124 "alfa.y" /* yacc.c:1646  */
+#line 133 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R93:\t<comparacion> ::= <exp> == <exp>\n");}
-#line 1757 "y.tab.c" /* yacc.c:1646  */
+#line 1766 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 125 "alfa.y" /* yacc.c:1646  */
+#line 134 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R94:\t<comparacion> ::= <exp> != <exp>\n");}
-#line 1763 "y.tab.c" /* yacc.c:1646  */
+#line 1772 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 126 "alfa.y" /* yacc.c:1646  */
+#line 135 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R95:\t<comparacion> ::= <exp> <= <exp>\n");}
-#line 1769 "y.tab.c" /* yacc.c:1646  */
+#line 1778 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 127 "alfa.y" /* yacc.c:1646  */
+#line 136 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R96:\t<comparacion> ::= <exp> >= <exp>\n");}
-#line 1775 "y.tab.c" /* yacc.c:1646  */
+#line 1784 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 128 "alfa.y" /* yacc.c:1646  */
+#line 137 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R97:\t<comparacion> ::= <exp> < <exp>\n");}
-#line 1781 "y.tab.c" /* yacc.c:1646  */
+#line 1790 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 129 "alfa.y" /* yacc.c:1646  */
+#line 138 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R98:\t<comparacion> ::= <exp> > <exp>\n");}
-#line 1787 "y.tab.c" /* yacc.c:1646  */
+#line 1796 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 131 "alfa.y" /* yacc.c:1646  */
+#line 140 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R99:\t<constante> ::= <constante_logica>\n");}
-#line 1793 "y.tab.c" /* yacc.c:1646  */
+#line 1802 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 132 "alfa.y" /* yacc.c:1646  */
+#line 141 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R100:\t<constante> ::= <constante_entera>\n");}
-#line 1799 "y.tab.c" /* yacc.c:1646  */
+#line 1808 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 134 "alfa.y" /* yacc.c:1646  */
+#line 143 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R102:\t<constante_logica> ::= true\n");}
-#line 1805 "y.tab.c" /* yacc.c:1646  */
+#line 1814 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 135 "alfa.y" /* yacc.c:1646  */
+#line 144 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R103:\t<constante_logica> ::= false\n");}
-#line 1811 "y.tab.c" /* yacc.c:1646  */
+#line 1820 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 137 "alfa.y" /* yacc.c:1646  */
+#line 146 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R104:\t<constante_entera> ::= TOK_CONSTANTE_ENTERA\n");}
-#line 1817 "y.tab.c" /* yacc.c:1646  */
+#line 1826 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 139 "alfa.y" /* yacc.c:1646  */
+#line 148 "alfa.y" /* yacc.c:1646  */
     {fprintf(out, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");}
-#line 1823 "y.tab.c" /* yacc.c:1646  */
+#line 1832 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1827 "y.tab.c" /* yacc.c:1646  */
+#line 1836 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2051,11 +2060,4 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 141 "alfa.y" /* yacc.c:1906  */
-
-
-int yyerror(char* s){
-		if(yylval != -1)
-			fprintf(stderr, "****Error sintactico en [lin %d col %d]\n", row, col-yyleng);
-		return -1;
-	}
+#line 150 "alfa.y" /* yacc.c:1906  */

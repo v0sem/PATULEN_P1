@@ -82,7 +82,8 @@ extern int yydebug;
     TOK_RETURN = 292,
     TOK_TRUE = 293,
     TOK_WHILE = 294,
-    TOK_ERROR = 295
+    TOK_ERROR = 295,
+    MENOSU = 296
   };
 #endif
 

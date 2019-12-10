@@ -1,9 +1,9 @@
 /*Autores: David Palomo, Pablo Sánchez. 1361_G3 PAUTLEN */
 %{ 
     #include <stdio.h>
-    #include "alfa.tab.h"
+    #include "y.tab.h"
 
-    int row=1, col=1;
+    int row=1, col=1, morferr=0;
     extern FILE* out;
 %} 
 
@@ -11,7 +11,7 @@
 
 /* Rules Section */
 INTEGER [0-9]+
-PALABRA [a-zA-Z0-9]*
+PALABRA "-"?[a-zA-Z0-9]*
 ENDLINE \n
 TAB \t
 COMMENT "//".*\n
@@ -35,8 +35,8 @@ return      {col+=yyleng; fprintf(out, ";D:\treturn\n"); return TOK_RETURN;}
 
 ";"         {col+=yyleng; fprintf(out, ";D:\t;\n"); return TOK_PUNTOYCOMA;}
 ","         {col+=yyleng; fprintf(out, ";D:\t,\n"); return TOK_COMA;}
-"("         {col+=yyleng; fprintf(out, ";D:\t\(\n"); return TOK_PARENTESISIZQUIERDO;}
-")"         {col+=yyleng; fprintf(out, ";D:\t\)\n"); return TOK_PARENTESISDERECHO;}
+"("         {col+=yyleng; fprintf(out, ";D:\t(\n"); return TOK_PARENTESISIZQUIERDO;}
+")"         {col+=yyleng; fprintf(out, ";D:\t)\n"); return TOK_PARENTESISDERECHO;}
 "["         {col+=yyleng; fprintf(out, ";D:\t[\n"); return TOK_CORCHETEIZQUIERDO;}
 "]"         {col+=yyleng; fprintf(out, ";D:\t]\n"); return TOK_CORCHETEDERECHO;}
 "{"         {col+=yyleng; fprintf(out, ";D:\t{\n"); return TOK_LLAVEIZQUIERDA;}
@@ -56,10 +56,6 @@ return      {col+=yyleng; fprintf(out, ";D:\treturn\n"); return TOK_RETURN;}
 "<"         {col+=yyleng; fprintf(out, ";D:\t<\n"); return TOK_MENOR;}
 ">"         {col+=yyleng; fprintf(out, ";D:\t>\n"); return TOK_MAYOR;}
 
-{ENDLINE}   {row++; col=1;}
-{COMMENT}   {row++; col=1;}
-{TAB}       {col+=yyleng;}
-
 {PALABRA}   {if (yyleng > 100) {
 		        fprintf(stderr, "****Error en [lin %d, col %d]: identificador demasiado largo (%s)\n", row, col, yytext);
 		        yylval = -1;
@@ -69,8 +65,5 @@ return      {col+=yyleng; fprintf(out, ";D:\treturn\n"); return TOK_RETURN;}
             fprintf(out, ";D:\t%s\n",yytext);
             return TOK_IDENTIFICADOR;
 }
-{INTEGER}           {col+=yyleng; return TOK_CONSTANTE_ENTERA;}
-true                {col+=yyleng; return TOK_TRUE;}
-false               {col+=yyleng; return TOK_FALSE;}
-.                   {fprintf(stderr, "****Error en [lin %d, col %d]: simbolo no permitido (%s)\n", row, col, yytext);yylval = -1;return -1;}
+.                   {fprintf(stderr, "****Error en [lin %d, col %d]: simbolo no permitido (%s)\n", row, col, yytext);morferr=1;return -1;}
 %%
