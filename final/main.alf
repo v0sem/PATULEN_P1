@@ -2,6 +2,12 @@ main
 {
     int x, y;
 
+    function int foo(int i){
+        int e;
+        e = i + 2;
+        return e;
+    }
+
     scanf x;
     y = 1;
     while(x>1) {

@@ -20,6 +20,7 @@
 	int tam = 1;
 	int pos_local=1;
 	int pos_param=1;
+	int ret = FALSE;
 	int etiqueta = 0;
 	int etq_else[10];
 	int num_else=0;
@@ -79,6 +80,8 @@
 %type <atributos> bucle
 %type <atributos> while
 %type <atributos> while_exp
+%type <atributos> fn_declaration
+%type <atributos> fn_name
 
 %start program
 %left TOK_RETURN
@@ -147,15 +150,65 @@ funciones: funcion funciones {fprintf(out, ";R:20:\t<funciones> ::= <funcion> <f
 }
     | {fprintf(out, ";R21:\t<funciones> ::= \n");}
 ;
-funcion: TOK_FUNCTION tipo identificador TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA declaraciones_funcion sentencias TOK_LLAVEDERECHA {fprintf(out, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n"); TS_cerrarAmbito(t_simb);}
+funcion: fn_declaration sentencias TOK_LLAVEDERECHA 
+{
+  if(ret == FALSE){
+	  return yyerror("Funcion no tiene retorno");
+  }
+  ret = FALSE;
+  TS_cerrarAmbito(t_simb);
+};
+
+fn_declaration : fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA declaraciones_funcion 
+{
+  strcpy($$.lexema, $1.lexema);
+  $$.tipo = $1.tipo;
+  declararFuncion(out, $1.lexema, pos_local-1);
+} 
+
+fn_name : TOK_FUNCTION tipo TOK_IDENTIFICADOR 
+{
+
+ 	if(TS_abrirAmbito(t_simb, $3.lexema, -1) == ERR){
+		return yyerror("Error al declarar funcion");
+	}
+
+  	$$.tipo = cur_type;
+  	strcpy($$.lexema, $3.lexema);
+
+	pos_local = 1;
+	pos_param = 1;
+	cur_cat = PARAMETRO;
+}
+
+parametros_funcion: parametro_funcion resto_parametros_funcion 
+{
+	while(pos_param > 0)
+	{
+		escribirParametro(yyout, pos_param, pos_param-1);
+		pos_param--;
+	}
+	cur_cat = VARIABLE;
+}
+|
 ;
-parametros_funcion: parametro_funcion resto_parametros_funcion {fprintf(out, ";R23:\t<parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>\n");}
-	| {fprintf(out, ";R24:\t<parametros_funcion> ::=\n");}
+
+resto_parametros_funcion: TOK_PUNTOYCOMA parametro_funcion resto_parametros_funcion
+|
 ;
-resto_parametros_funcion: TOK_PUNTOYCOMA parametro_funcion resto_parametros_funcion {fprintf(out, ";R25:\t<resto_parametros_funcion> ::= ; <parametro_funcion> <resto_parametros_funcion>\n");}
-	| {fprintf(out, ";R26:\t<resto_parametros_funcion> ::=\n");}
+
+parametro_funcion: tipo idpf 
+{
+  pos_param++;
+}
 ;
-parametro_funcion: tipo identificador {fprintf(out, ";R27:\t<parametro_funcion> ::= <tipo> <identificador>\n");}
+
+idpf : TOK_IDENTIFICADOR 
+{
+    if(TS_insertarElemento(t_simb, $1.lexema, 0, cur_cat, cur_type, cur_class) == ERR){
+		return yyerror("Error al declarar");
+	}
+}
 ;
 declaraciones_funcion: declaraciones {fprintf(out, ";R28:\t<declaraciones_funcion> ::= <declaraciones>\n");}
 	| {fprintf(out, ";R29:\t<declaraciones_funcion> ::=\n");}
@@ -247,6 +300,7 @@ retorno_funcion: TOK_RETURN exp
 {
 	fprintf(out, ";R61:\t<retorno_funcion> ::= return <exp>\n");
 	retornarFuncion(yyout, $2.es_var);
+	ret = TRUE;
 }
 ;
 exp: exp TOK_MAS exp 
@@ -469,19 +523,6 @@ identificador: TOK_IDENTIFICADOR
 		}
 
 		pos_local++;
-	}
-	else if (declar_f == TRUE && cur_cat == FUNCION){
-		if(TS_abrirAmbito(t_simb, $1.lexema, -1) == ERR){
-			return yyerror("Error al insertar un simbolo funcion");
-		}
-
-	}
-	else if (declar_f == TRUE && cur_cat == PARAMETRO){
-		if(TS_insertarElemento(t_simb, $1.lexema, 0, cur_cat, cur_type, cur_class) == ERR){
-			return yyerror("Error al insertar un simbolo parametro\n");
-		}
-
-		pos_param++;
 	}
 	else{
 		elem = TS_buscarElemento(t_simb, $1.lexema);
