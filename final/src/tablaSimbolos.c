@@ -26,7 +26,9 @@ void TS_liberar(TABLA_SIMBOLOS *p_tabla) {
 
 STATUS TS_insertarElemento(TABLA_SIMBOLOS *p_tabla, const char *id, int n, CATEGORIA categoria, TIPO tipo, CLASE clase) {
 	TABLA_HASH *th_insertar = NULL;
-	if (!p_tabla || !id || n < 0) return ERR;
+	if (!p_tabla || !id || n < 0){
+		return ERR;
+	} 
 	if (p_tabla->contexto_local) th_insertar = p_tabla->contexto_local;
 	else th_insertar = p_tabla->contexto_global;
 	return insertar_simbolo(th_insertar, id, categoria, tipo, clase, n, 0);

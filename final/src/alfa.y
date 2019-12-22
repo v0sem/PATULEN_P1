@@ -163,13 +163,15 @@ fn_declaration : fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTES
 {
   strcpy($$.lexema, $1.lexema);
   $$.tipo = $1.tipo;
-  declararFuncion(out, $1.lexema, pos_local-1);
+  declararFuncion(yyout, $1.lexema, pos_local-1);
+  elem = TS_buscarElemento(t_simb, $1.lexema);
+  elem->adicional1 = pos_local-1;
 } 
 
 fn_name : TOK_FUNCTION tipo TOK_IDENTIFICADOR 
 {
 
- 	if(TS_abrirAmbito(t_simb, $3.lexema, -1) == ERR){
+ 	if(TS_abrirAmbito(t_simb, $3.lexema, -10) == ERR){
 		return yyerror("Error al declarar funcion");
 	}
 
@@ -189,6 +191,7 @@ parametros_funcion: parametro_funcion resto_parametros_funcion
 		pos_param--;
 	}
 	cur_cat = VARIABLE;
+	declar_f=TRUE;
 }
 |
 ;
@@ -210,7 +213,7 @@ idpf : TOK_IDENTIFICADOR
 	}
 }
 ;
-declaraciones_funcion: declaraciones {fprintf(out, ";R28:\t<declaraciones_funcion> ::= <declaraciones>\n");}
+declaraciones_funcion: declaraciones {fprintf(out, ";R28:\t<declaraciones_funcion> ::= <declaraciones>\n");declar_f=FALSE;}
 	| {fprintf(out, ";R29:\t<declaraciones_funcion> ::=\n");}
 ;
 sentencias: sentencia {fprintf(out, ";R30:\t<sentencias> ::= <sentencia>\n");}
@@ -414,10 +417,22 @@ exp: exp TOK_MAS exp
 	| elemento_vector {fprintf(out, ";R85:\t<exp> ::= <elemento_vector>\n");}
 	| identificador TOK_PARENTESISIZQUIERDO lista_expresiones TOK_PARENTESISDERECHO {fprintf(out, ";R88:\t<exp> ::= <identificaor> ( <lista_expresiones> )\n");}
 ;
-lista_expresiones: exp resto_lista_expresiones {fprintf(out, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");}
+lista_expresiones: exp resto_lista_expresiones 
+{
+	fprintf(out, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");
+	elem = TS_buscarElemento(t_simb, $1.lexema);
+	if(elem->categoria == FUNCION){
+		llamarFuncion(yyout, $1.lexema, elem->adicional1);
+	}
+}
 	| {fprintf(out, ";R90:\t<lista_expresiones> ::=\n");}
 ;
-resto_lista_expresiones: TOK_COMA exp resto_lista_expresiones {fprintf(out, ";R91:\t<resto_lista_expresiones> ::= , <exp> <resto_lista_expresiones>\n");}
+resto_lista_expresiones: TOK_COMA exp resto_lista_expresiones 
+{
+	fprintf(out, ";R91:\t<resto_lista_expresiones> ::= , <exp> <resto_lista_expresiones>\n");
+	asignarDestinoEnPila(yyout, $2.es_var);
+	operandoEnPilaAArgumento(yyout, $2.es_var);
+}
 	| {fprintf(out, ";R92:\t<resto_lista_expresiones> ::= \n");}
 ;
 comparacion: exp TOK_IGUAL exp {
@@ -522,6 +537,7 @@ identificador: TOK_IDENTIFICADOR
 			return yyerror("Error al insertar un simbolo variable local\n");
 		}
 
+		escribirVariableLocal(yyout, pos_local);
 		pos_local++;
 	}
 	else{
