@@ -21,13 +21,15 @@
 	int pos_local=1;
 	int pos_param=1;
 	int etiqueta = 0;
+	int etq_else[10];
+	int num_else=0;
 	INFO_SIMBOLO *elem;
 
 	TABLA_SIMBOLOS * t_simb;
 
 	int yyerror(char* s){
 		if(morferr!=1)
-			fprintf(stderr, "****Error sintactico en [lin %d col %d]\n%s\n", row, col-yyleng, s);
+			fprintf(stderr, "****Error sintactico en [lin %d col %d]: %s\n", row, col-yyleng, s);
 		return -1;
 	}
 %}
@@ -73,6 +75,10 @@
 %type <atributos> identificador
 %type <atributos> condicional
 %type <atributos> if_exp
+%type <atributos> if_exp_sentencias
+%type <atributos> bucle
+%type <atributos> while
+%type <atributos> while_exp
 
 %start program
 %left TOK_RETURN
@@ -180,28 +186,51 @@ asignacion: identificador TOK_ASIGNACION exp
 ;
 elemento_vector: identificador TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO {fprintf(out, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n");}
 ;
-condicional: TOK_IF TOK_PARENTESISIZQUIERDO if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA 
-{
-	fprintf(out, ";R50:\t<condicional> ::= if ( <exp> ) { <sentencias> }\n");
-	ifthen_fin(yyout, $3.valor);
+condicional: if_exp_sentencias TOK_LLAVEDERECHA {
+	ifthenelse_fin(yyout, $1.valor); }
+| if_exp_sentencias TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {
+    ifthenelse_fin(yyout, $1.valor);
 }
-	| TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA 
-	{
-		fprintf(out, ";R51:\t<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }\n");
-	}
 ;
-if_exp: comparacion 
+
+if_exp: TOK_IF TOK_PARENTESISIZQUIERDO comparacion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA 
 {
-	if($1.tipo != BOOLEANO) {
-		return yyerror("Condicional sin booleano");
+  	if($3.tipo != BOOLEANO){
+		return yyerror("Condicional sin booleanos");
 	}
 	$$.valor = etiqueta;
 	etiqueta++;
-	ifthen_inicio(yyout, $1.es_var, $$.valor);
+  	ifthen_inicio(yyout, $3.es_var, $$.valor);
 }
 ;
-bucle: TOK_WHILE TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {fprintf(out, ";R52:\t<bucle> ::= while ( <exp> ) { <sentencias> }\n");}
+
+if_exp_sentencias: if_exp sentencias {
+  	$$.valor = $1.valor;
+  	ifthenelse_fin_then(yyout, $$.valor);
+}
 ;
+
+bucle: while_exp sentencias TOK_LLAVEDERECHA 
+{
+  while_fin(yyout, $1.valor);
+}
+;
+
+while: TOK_WHILE TOK_PARENTESISIZQUIERDO 
+{
+  $$.valor = etiqueta;
+  etiqueta++;
+  while_inicio(yyout, $$.valor);
+};
+
+while_exp: while comparacion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA 
+{
+  if($2.tipo != BOOLEANO){
+	  return yyerror("Salida de while debe ser booleano");
+  }
+  $$.valor = $1.valor;
+  while_exp_pila(yyout, $2.es_var, $$.valor);
+};
 lectura: TOK_SCANF identificador 
 {
 	fprintf(out, ";R54:\t<lectura> ::= scanf <identificador>\n");
