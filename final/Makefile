@@ -3,7 +3,7 @@ ODIR=obj
 SDIR=src
 CC=gcc
 CFLAGS= -g -Wall
-prg=alfa
+prg=main
 
 _FILES=tablaHash tablaSimbolos generacion y.tab
 
@@ -19,7 +19,7 @@ all:
 	mv *.h $(IDIR)
 	$(MAKE) alfa
 
-alfa: $(OBJ) $(ODIR)/alfa.o
+alfa: $(OBJ) $(ODIR)/main.o
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 asm:

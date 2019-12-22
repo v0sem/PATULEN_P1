@@ -34,17 +34,17 @@
 
 %code requires {
 	/* Atributos */
-	struct tipo_atributos{
+	struct s_tipo_atributos{
 		char lexema[101];
 		int tipo;
 		int valor;
     	int es_var;
-	};
+	}tipo_atributos;
 }
 
 %union
 {
-	struct tipo_atributos atributos;
+	struct s_tipo_atributos atributos;
 }
 
 
@@ -92,11 +92,11 @@ iniciar: {
 	if (!(t_simb = TS_crear()))
        return yyerror("Error al crear la tabla de simbolos\n");
 	escribir_subseccion_data(yyout);
+	escribir_cabecera_bss(yyout);
 }
 ;
 
 post_dec: {
-	escribir_cabecera_bss(yyout);
 	escribir_segmento_codigo(yyout);
 	declar = FALSE;
 	cur_cat = FUNCION;
@@ -376,6 +376,7 @@ constante_entera: TOK_CONSTANTE_ENTERA
 	fprintf(out, ";R104:\t<constante_entera> ::= TOK_CONSTANTE_ENTERA\n");
 	$$.valor = $1.valor;
 	strcpy($$.lexema, $1.lexema);
+	printf("$$.lexema\n");
 }
 ;
 identificador: TOK_IDENTIFICADOR 
