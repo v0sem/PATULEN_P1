@@ -27,7 +27,7 @@ asm:
 	./alfa $(prg).alf $(prg).asm
 	nasm -felf32 $(prg).asm
 	mv $(prg).o $(ODIR)/$(prg).o
-	gcc -m32 -o $(prg) $(ODIR)/$(prg).o $(ODIR)/alfalib.o
+	gcc -m32 -o $(prg) $(ODIR)/$(prg).o lib/alfalib.o
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
@@ -41,5 +41,4 @@ clean:
 	-rm $(OBJ) $(IDIR)/y.tab.h 
 	-rm $(SDIR)/lex.yy.c $(SDIR)/y.tab.c $(ODIR)/$(prg).o 
 	-rm  -rf $(ODIR)/*.o
-	-rm prg/*.asm
-	-rm y.output alfa *.asm
+	-rm y.output alfa *.asm sintactico.txt

@@ -12,7 +12,7 @@
 
 /* Rules Section */
 INTEGER [0-9]+
-PALABRA "-"?[a-zA-Z0-9]*
+PALABRA "-"?[a-zA-Z][a-zA-Z0-9]*
 ENDLINE \n
 TAB \t
 COMMENT "//".*\n

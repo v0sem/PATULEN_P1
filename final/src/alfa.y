@@ -27,7 +27,7 @@
 
 	int yyerror(char* s){
 		if(morferr!=1)
-			fprintf(stderr, "****Error sintactico en [lin %d col %d]\n", row, col-yyleng);
+			fprintf(stderr, "****Error sintactico en [lin %d col %d]\n%s\n", row, col-yyleng, s);
 		return -1;
 	}
 %}
@@ -71,6 +71,8 @@
 %type <atributos> constante_logica
 %type <atributos> constante_entera
 %type <atributos> identificador
+%type <atributos> condicional
+%type <atributos> if_exp
 
 %start program
 %left TOK_RETURN
@@ -99,12 +101,12 @@ iniciar: {
 post_dec: {
 	escribir_segmento_codigo(yyout);
 	declar = FALSE;
-	cur_cat = FUNCION;
 }
 ;
 
 post_func: {
 	escribir_inicio_main(yyout);
+	declar_f = FALSE;
 }
 ;
 
@@ -178,16 +180,45 @@ asignacion: identificador TOK_ASIGNACION exp
 ;
 elemento_vector: identificador TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO {fprintf(out, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n");}
 ;
-condicional: TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {fprintf(out, ";R50:\t<condicional> ::= if ( <exp> ) { <sentencias> }\n");}
-	| TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {fprintf(out, ";R51:\t<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }\n");}
+condicional: TOK_IF TOK_PARENTESISIZQUIERDO if_exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA 
+{
+	fprintf(out, ";R50:\t<condicional> ::= if ( <exp> ) { <sentencias> }\n");
+	ifthen_fin(yyout, $3.valor);
+}
+	| TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA 
+	{
+		fprintf(out, ";R51:\t<condicional> ::= if ( <exp> ) { <sentencias> } else { <sentencias> }\n");
+	}
+;
+if_exp: comparacion 
+{
+	if($1.tipo != BOOLEANO) {
+		return yyerror("Condicional sin booleano");
+	}
+	$$.valor = etiqueta;
+	etiqueta++;
+	ifthen_inicio(yyout, $1.es_var, $$.valor);
+}
 ;
 bucle: TOK_WHILE TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA {fprintf(out, ";R52:\t<bucle> ::= while ( <exp> ) { <sentencias> }\n");}
 ;
-lectura: TOK_SCANF identificador {fprintf(out, ";R54:\t<lectura> ::= scanf <identificador>\n");}
+lectura: TOK_SCANF identificador 
+{
+	fprintf(out, ";R54:\t<lectura> ::= scanf <identificador>\n");
+	leer(yyout, $2.lexema, $2.tipo);
+}
 ;
-escritura: TOK_PRINTF exp {fprintf(out, ";R56:\t<escritura> ::= printf <exp>\n");}
+escritura: TOK_PRINTF exp 
+{
+	fprintf(out, ";R56:\t<escritura> ::= printf <exp>\n");
+	escribir(yyout, $2.es_var, $2.tipo);
+}
 ;
-retorno_funcion: TOK_RETURN exp {fprintf(out, ";R61:\t<retorno_funcion> ::= return <exp>\n");}
+retorno_funcion: TOK_RETURN exp 
+{
+	fprintf(out, ";R61:\t<retorno_funcion> ::= return <exp>\n");
+	retornarFuncion(yyout, $2.es_var);
+}
 ;
 exp: exp TOK_MAS exp 
 {
@@ -198,6 +229,7 @@ exp: exp TOK_MAS exp
 
 	sumar(yyout, $1.es_var, $3.es_var);
 	$$.tipo = ENTERO;
+	$$.es_var = FALSE;
 }
 	| exp TOK_MENOS exp 
 	{
@@ -307,52 +339,64 @@ resto_lista_expresiones: TOK_COMA exp resto_lista_expresiones {fprintf(out, ";R9
 ;
 comparacion: exp TOK_IGUAL exp {
 	fprintf(out, ";R93:\t<comparacion> ::= <exp> == <exp>\n");
-	if($1.tipo != ENTERO || $3.tipo != BOOLEANO){
-		return yyerror("No se puede comparar menores mayores con booleanos\n");
+	if($1.tipo != ENTERO || $3.tipo != ENTERO){
+		return yyerror("No se puede comparar  con booleanos\n");
 	}
 	igual(yyout, $1.es_var, $3.es_var, etiqueta);
 	etiqueta++;
+	$$.tipo = BOOLEANO;
+	$$.es_var = FALSE;
 	}
 	| exp TOK_DISTINTO exp {
 		fprintf(out, ";R94:\t<comparacion> ::= <exp> != <exp>\n");
-		if($1.tipo != ENTERO || $3.tipo != BOOLEANO){
-			return yyerror("No se puede comparar menores mayores con booleanos\n");
+		if($1.tipo != ENTERO || $3.tipo != ENTERO){
+			return yyerror("No se puede comparar  con booleanos\n");
 		}
 		distinto(yyout, $1.es_var, $3.es_var, etiqueta);
 		etiqueta++;
+		$$.tipo = BOOLEANO;
+		$$.es_var = FALSE;
 		}
 	| exp TOK_MENORIGUAL exp 
 	{
 		fprintf(out, ";R95:\t<comparacion> ::= <exp> <= <exp>\n");
-		if($1.tipo != ENTERO || $3.tipo != BOOLEANO){
-			return yyerror("No se puede comparar menores o mayores con booleanos\n");
+		if($1.tipo != ENTERO || $3.tipo != ENTERO){
+			return yyerror("No se puede comparar  con booleanos\n");
 		}
 		menor_igual(yyout, $1.es_var, $3.es_var, etiqueta);
 		etiqueta++;
+		$$.tipo = BOOLEANO;
+		$$.es_var = FALSE;
 	}
 	| exp TOK_MAYORIGUAL exp {
 		fprintf(out, ";R96:\t<comparacion> ::= <exp> >= <exp>\n");
-		if($1.tipo != ENTERO || $3.tipo != BOOLEANO){
-			return yyerror("No se puede comparar menores o mayores con booleanos\n");
+		if($1.tipo != ENTERO || $3.tipo != ENTERO){
+			return yyerror("No se puede comparar  con booleanos\n");
 		}
 		mayor_igual(yyout, $1.es_var, $3.es_var, etiqueta);
 		etiqueta++;
+		$$.tipo = BOOLEANO;
+		$$.es_var = FALSE;
 	}
 	| exp TOK_MENOR exp {
 		fprintf(out, ";R97:\t<comparacion> ::= <exp> < <exp>\n");
-		if($1.tipo != ENTERO || $3.tipo != BOOLEANO){
-			return yyerror("No se puede comparar menores o mayores con booleanos\n");
+		if($1.tipo != ENTERO || $3.tipo != ENTERO){
+			return yyerror("No se puede comparar  con booleanos\n");
 		}
 		menor(yyout, $1.es_var, $3.es_var, etiqueta);
 		etiqueta++;
+		$$.tipo = BOOLEANO;
+		$$.es_var = FALSE;
 	}
 	| exp TOK_MAYOR exp {
 		fprintf(out, ";R98:\t<comparacion> ::= <exp> > <exp>\n");
-		if($1.tipo != ENTERO || $3.tipo != BOOLEANO){
-			return yyerror("No se puede comparar menores o mayores con booleanos\n");
+		if($1.tipo != ENTERO || $3.tipo != ENTERO){
+			return yyerror("No se puede comparar  con booleanos\n");
 		}
 		mayor(yyout, $1.es_var, $3.es_var, etiqueta);
 		etiqueta++;
+		$$.tipo = BOOLEANO;
+		$$.es_var = FALSE;
 	}
 ;
 constante: constante_logica {fprintf(out, ";R99:\t<constante> ::= <constante_logica>\n");$$.valor = $1.valor; $$.tipo = BOOLEANO; $$.es_var = FALSE;}
@@ -376,7 +420,6 @@ constante_entera: TOK_CONSTANTE_ENTERA
 	fprintf(out, ";R104:\t<constante_entera> ::= TOK_CONSTANTE_ENTERA\n");
 	$$.valor = $1.valor;
 	strcpy($$.lexema, $1.lexema);
-	printf("$$.lexema\n");
 }
 ;
 identificador: TOK_IDENTIFICADOR 
@@ -385,7 +428,7 @@ identificador: TOK_IDENTIFICADOR
 
 	if(declar == TRUE){
 		if(TS_insertarElemento(t_simb, $1.lexema, 0, cur_cat, 	cur_type, cur_class) == ERR){
-			return yyerror("Error al insertar un simbolo\n");
+			return yyerror("Error al insertar un simbolo variable global");
 		}
 
 		declarar_variable(yyout, $1.lexema, cur_type, tam);
@@ -393,20 +436,20 @@ identificador: TOK_IDENTIFICADOR
 	}
 	else if (declar_f == TRUE && cur_cat == VARIABLE){
 		if(TS_insertarElemento(t_simb, $1.lexema, 0, cur_cat, cur_type, cur_class) == ERR){
-			return yyerror("Error al insertar un simbolo\n");
+			return yyerror("Error al insertar un simbolo variable local\n");
 		}
 
 		pos_local++;
 	}
 	else if (declar_f == TRUE && cur_cat == FUNCION){
 		if(TS_abrirAmbito(t_simb, $1.lexema, -1) == ERR){
-			return yyerror("Error al insertar un simbolo\n");
+			return yyerror("Error al insertar un simbolo funcion");
 		}
 
 	}
 	else if (declar_f == TRUE && cur_cat == PARAMETRO){
 		if(TS_insertarElemento(t_simb, $1.lexema, 0, cur_cat, cur_type, cur_class) == ERR){
-			return yyerror("Error al insertar un simbolo\n");
+			return yyerror("Error al insertar un simbolo parametro\n");
 		}
 
 		pos_param++;
