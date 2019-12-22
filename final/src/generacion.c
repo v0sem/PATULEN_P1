@@ -1,4 +1,4 @@
-#include "generacion.h"
+#include "../include/generacion.h"
 #include <stdio.h>
 #include <stdlib.h>
 

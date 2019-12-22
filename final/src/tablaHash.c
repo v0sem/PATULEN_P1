@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "tablaHash.h"
+#include "../include/tablaHash.h"
 
 INFO_SIMBOLO *crear_info_simbolo(const char *lexema, CATEGORIA categ, TIPO tipo, CLASE clase, int adic1, int adic2) {
 	INFO_SIMBOLO *p_info = NULL;

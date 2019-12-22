@@ -1,9 +1,11 @@
 %{
 	#include <stdio.h>
 	#include <stdlib.h>
-	#include "include/y.tab.h"
-	#include "include/tablaHash.h"
-	#include "include/generacion.h"
+	#include <string.h>
+	#include "../include/y.tab.h"
+	#include "../include/tablaSimbolos.h"
+	#include "../include/tablaHash.h"
+	#include "../include/generacion.h"
 
 	extern FILE* out;
 	extern FILE* yyout;
@@ -17,10 +19,11 @@
 	int cur_type, cur_class, cur_cat = VARIABLE;
 	int tam = 1;
 	int pos_local=1;
+	int pos_param=1;
 	int etiqueta = 0;
 	INFO_SIMBOLO *elem;
 
-	TABLA_SIMBOLOS t_simb;
+	TABLA_SIMBOLOS * t_simb;
 
 	int yyerror(char* s){
 		if(morferr!=1)
@@ -29,15 +32,26 @@
 	}
 %}
 
+%code requires {
+	/* Atributos */
+	struct tipo_atributos{
+		char lexema[101];
+		int tipo;
+		int valor;
+    	int es_var;
+	};
+}
+
 %union
 {
-	tipo_atributos = atributos;
+	struct tipo_atributos atributos;
 }
+
 
 %token <atributos> TOK_IDENTIFICADOR
 %token <atributos> TOK_CONSTANTE_ENTERA
 
-%token TOK_MAIN 
+%token TOK_MAIN TOK_TRUE TOK_FALSE
 %token TOK_ARRAY 
 %token TOK_IGUAL 
 %token TOK_MAS TOK_MAYOR TOK_MENOR
@@ -102,7 +116,7 @@ declaracion: clase identificadores TOK_PUNTOYCOMA {fprintf(out, ";R4:\t<declarac
 }
 ;
 clase: clase_escalar {fprintf(out, ";R5:\t<clase> ::= <clase_escalar>\n"); cur_class = ESCALAR;}
-    | clase_vector {fprintf(out, ";R7:\t<clase> ::= <clase_vector>\n"); cur_type = VECTOR;}
+    | clase_vector {fprintf(out, ";R7:\t<clase> ::= <clase_vector>\n"); cur_class = VECTOR;}
 ;
 clase_escalar: tipo {fprintf(out, ";R9:\t<clase_escalar> ::= <tipo>\n");}
 ;
@@ -125,7 +139,7 @@ funciones: funcion funciones {fprintf(out, ";R:20:\t<funciones> ::= <funcion> <f
 }
     | {fprintf(out, ";R21:\t<funciones> ::= \n");}
 ;
-funcion: TOK_FUNCTION tipo identificador TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA declaraciones_funcion sentencias TOK_LLAVEDERECHA {fprintf(out, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n");}
+funcion: TOK_FUNCTION tipo identificador TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA declaraciones_funcion sentencias TOK_LLAVEDERECHA {fprintf(out, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ) { <declaraciones_funcion> <sentencias> }\n"); TS_cerrarAmbito(t_simb);}
 ;
 parametros_funcion: parametro_funcion resto_parametros_funcion {fprintf(out, ";R23:\t<parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>\n");}
 	| {fprintf(out, ";R24:\t<parametros_funcion> ::=\n");}
@@ -152,7 +166,14 @@ sentencia_simple: asignacion {fprintf(out, ";R34:\t<sentencia_simple> ::= <asign
 bloque: condicional {fprintf(out, ";R40:\t<bloque> ::= <condicional>\n");}
 	| bucle {fprintf(out, ";R41:\t<bloque> ::= <bucle>\n");}
 ;
-asignacion: identificador TOK_ASIGNACION exp {fprintf(out, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");}
+asignacion: identificador TOK_ASIGNACION exp 
+{
+	fprintf(out, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");
+	if($1.tipo != $3.tipo){
+		return yyerror("Asignacion no permitida\n");
+	}
+	asignar(yyout, $1.lexema, $3.es_var);
+}
 	| elemento_vector TOK_ASIGNACION exp {fprintf(out, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");}
 ;
 elemento_vector: identificador TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO {fprintf(out, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n");}
@@ -250,7 +271,7 @@ exp: exp TOK_MAS exp
 			return yyerror("Operacion logica con 	enteros\n");
 		}
 	
-		no(yyout, $2.es_var);
+		no(yyout, $2.es_var, 1);
 		$$.tipo = BOOLEANO;
 		$$.es_var = FALSE;
 	}
@@ -341,20 +362,20 @@ constante_logica: TOK_TRUE
 	{
 		fprintf(out, ";R102:\t<constante_logica> ::= true\n");
 		$$.valor = TRUE;
-		$$.lexema = "true";
+		strcpy($$.lexema, "true");
 	}
 	| TOK_FALSE 
 	{
 		fprintf(out, ";R103:\t<constante_logica> ::= false\n");
 		$$.valor = FALSE;
-		$$.lexema = "false";
+		strcpy($$.lexema, "false");
 		}
 ;
 constante_entera: TOK_CONSTANTE_ENTERA 
 {
 	fprintf(out, ";R104:\t<constante_entera> ::= TOK_CONSTANTE_ENTERA\n");
 	$$.valor = $1.valor;
-	$$.lexema = $1.lexema;
+	strcpy($$.lexema, $1.lexema);
 }
 ;
 identificador: TOK_IDENTIFICADOR 
@@ -362,7 +383,7 @@ identificador: TOK_IDENTIFICADOR
 	fprintf(out, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
 
 	if(declar == TRUE){
-		if(TS_insertarElemento(t_simb, $1.lexema, cur_cat, 	cur_type, cur_class) == ERR){
+		if(TS_insertarElemento(t_simb, $1.lexema, 0, cur_cat, 	cur_type, cur_class) == ERR){
 			return yyerror("Error al insertar un simbolo\n");
 		}
 
@@ -370,19 +391,20 @@ identificador: TOK_IDENTIFICADOR
 		tam = 1;
 	}
 	else if (declar_f == TRUE && cur_cat == VARIABLE){
-		if(TS_insertarElemento(t_simb, $1.lexema, cur_cat, cur_type, cur_class) == ERR){
+		if(TS_insertarElemento(t_simb, $1.lexema, 0, cur_cat, cur_type, cur_class) == ERR){
 			return yyerror("Error al insertar un simbolo\n");
 		}
 
 		pos_local++;
 	}
 	else if (declar_f == TRUE && cur_cat == FUNCION){
-		if(TS_insertarElemento(t_simb, $1.lexema, cur_cat, cur_type, cur_class) == ERR){
+		if(TS_abrirAmbito(t_simb, $1.lexema, -1) == ERR){
 			return yyerror("Error al insertar un simbolo\n");
 		}
+
 	}
 	else if (declar_f == TRUE && cur_cat == PARAMETRO){
-		if(TS_insertarElemento(t_simb, $1.lexema, cur_cat, cur_type, cur_class) == ERR){
+		if(TS_insertarElemento(t_simb, $1.lexema, 0, cur_cat, cur_type, cur_class) == ERR){
 			return yyerror("Error al insertar un simbolo\n");
 		}
 
@@ -390,10 +412,10 @@ identificador: TOK_IDENTIFICADOR
 	}
 	else{
 		elem = TS_buscarElemento(t_simb, $1.lexema);
+		if(elem == NULL)
+			return yyerror("Elemento no declarado\n");
 		$$.tipo = elem->tipo;
 		$$.es_var = TRUE;
-		if($$.tipo == ENTERO)
-			$$.valor = elem->adicional1;
 	}
 	
 }

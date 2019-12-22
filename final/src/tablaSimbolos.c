@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "tablaSimbolos.h"
+#include "../include/tablaSimbolos.h"
 
 TABLA_SIMBOLOS *TS_crear() {
     TABLA_SIMBOLOS *p_tabla = NULL;

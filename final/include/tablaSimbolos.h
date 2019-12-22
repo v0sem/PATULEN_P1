@@ -3,6 +3,7 @@
 #define TABLASIMB_H
 
 #include "tablaHash.h"
+#include <stdio.h>
 
 /**************** CONSTANTES *************************************************/
 
@@ -16,14 +17,6 @@ typedef struct {
 	TABLA_HASH *contexto_global;
     TABLA_HASH *contexto_local;
 } TABLA_SIMBOLOS;
-
-/* Atributos */
-typedef struct{
-	char lexema[MAX_ID + 1];
-	int tipo;
-	int valor;
-    int es_var;
-} tipo_atributos;
 
 /**************** FUNCIONES **************************************************/
 
