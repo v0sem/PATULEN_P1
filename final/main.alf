@@ -1,25 +1,61 @@
 main
 {
-    int x, y, resultado;
+    int x, y, z;
 
-	function int suma (int num1; int num2)
+	scanf x;
+	scanf y;
+	scanf z;
+
+	if ((x==0)&&(y==0) && (z==0))
 	{
-		return num1+num2;
+	  printf 0;
 	}
 
-    x = 1;
-	y = 3;
-	
-	resultado = suma (x,y);
-	printf resultado;
-	
-	resultado = suma (x,1);
-	printf resultado;
-	
-	resultado = suma (10,y);
-	printf resultado;
-
-	resultado = suma (3,5);
-	printf resultado;	
-	
+	else
+	{
+	   if ((x>0)&&(y>0))
+	   {
+	      if ((z>0))
+		  {
+	         printf 1;
+		  }
+          else
+		  {
+	         printf 5;
+		  }
+	   }
+	   if ((x<0)&&(y>0))
+	   {
+	      if ((z>0))
+		  {
+	         printf 2;
+		  }
+          else
+		  {
+	         printf 6;
+		  }
+	   }
+	   if ((x<0)&&(y<0))
+	   {
+	      if ((z>0))
+		  {
+	         printf 3;
+		  }
+          else
+		  {
+	         printf 7;
+		  }
+	   }
+	   if ((x>0)&&(y<0))
+	   {
+	      if ((z>0))
+		  {
+	         printf 4;
+		  }
+          else
+		  {
+	         printf 8;
+		  }
+	   }
+	}
 }

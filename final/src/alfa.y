@@ -19,6 +19,7 @@
 	int cur_type, cur_class, cur_cat = VARIABLE;
 	int tam = 1;
 	int pos_local=1;
+	int num_params=1; //1 por el puntero de pila
 	int pos_param=1;
 	int ret = FALSE;
 	int etiqueta = 0;
@@ -165,7 +166,6 @@ fn_declaration : fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTES
 {
   strcpy($$.lexema, $1.lexema);
   $$.tipo = $1.tipo;
-  declararFuncion(yyout, $1.lexema, pos_local-1);
   elem = TS_buscarElemento(t_simb, $1.lexema);
   elem->adicional1 = pos_local-1;
 } 
@@ -180,6 +180,8 @@ fn_name : TOK_FUNCTION tipo TOK_IDENTIFICADOR
   	$$.tipo = cur_type;
   	strcpy($$.lexema, $3.lexema);
 
+  	declararFuncion(yyout, $3.lexema, pos_local-1);
+
 	pos_local = 1;
 	pos_param = 1;
 	cur_cat = PARAMETRO;
@@ -187,9 +189,9 @@ fn_name : TOK_FUNCTION tipo TOK_IDENTIFICADOR
 
 parametros_funcion: parametro_funcion resto_parametros_funcion 
 {
-	while(pos_param > 0)
+	while(pos_param > 1)
 	{
-		escribirParametro(yyout, pos_param, pos_param-1);
+		escribirParametro(yyout, num_params, pos_param + num_params);
 		pos_param--;
 	}
 	cur_cat = VARIABLE;
@@ -205,6 +207,7 @@ resto_parametros_funcion: TOK_PUNTOYCOMA parametro_funcion resto_parametros_func
 parametro_funcion: tipo idpf 
 {
   pos_param++;
+  num_params++;
 }
 ;
 
@@ -241,14 +244,22 @@ asignacion: identificador TOK_ASIGNACION exp
 	asignar(yyout, $1.lexema, $3.es_var);
 }
 	| elemento_vector TOK_ASIGNACION exp {
+		char *aux;
 		fprintf(out, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");
 		elem = TS_buscarElemento(t_simb, $1.lexema);
-		char *aux = (char*)malloc(1);
-		aux[0] = (char)($1.valor + 48);
+		if($1.valor < 10) {
+			aux = (char*)malloc(1);
+			aux[0] = (char)($1.valor + 48);
+		}
+		else {
+			aux = (char*)malloc(2);
+			aux[0] = (char)($1.valor/10 + 48);
+			aux[1] = (char)($1.valor%10 + 48);
+		}
 		escribir_operando(yyout, aux, 0);
-		printf("%d\n", elem->adicional1);
   		escribir_elemento_vector(yyout, $1.lexema, elem->adicional1, $3.es_var);
   		asignarDestinoEnPila(yyout, $3.es_var);
+		operandoEnPilaAArgumento(yyout, $3.es_var);
 	}
 ;
 elemento_vector: identificador TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO {
@@ -258,7 +269,6 @@ elemento_vector: identificador TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO {
 	$$.valor = atoi($3.lexema);
 	$$.tipo = elem->tipo;
 	$$.es_var = TRUE;
-	printf("%d\n", elem->adicional1);
 	escribir_elemento_vector(yyout, $1.lexema, elem->adicional1, $3.es_var);
 }
 ;
@@ -557,9 +567,9 @@ identificador: TOK_IDENTIFICADOR
 		tam = 1;
 	}
 	else if (declar_f == TRUE && cur_cat == VARIABLE){
-		if(TS_insertarElemento(t_simb, $1.lexema, 0, cur_cat, cur_type, cur_class) == ERR){
+		/*if(TS_insertarElemento(t_simb, $1.lexema, 0, cur_cat, cur_type, cur_class) == ERR){
 			return yyerror("Error al insertar un simbolo variable local\n");
-		}
+		}*/
 
 		escribirVariableLocal(yyout, pos_local);
 		pos_local++;

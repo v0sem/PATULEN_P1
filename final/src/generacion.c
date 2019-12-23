@@ -389,7 +389,7 @@ void retornarFuncion(FILE *fd_asm, int es_variable) {
 
 void escribirParametro(FILE *fpasm, int pos_parametro, int num_total_parametros) {
 	int a = 0;
-	a = 4 * (1 + (num_total_parametros - pos_parametro));
+	a = 4 * (num_total_parametros - pos_parametro);
 	fprintf(fpasm, "\tlea eax, [ebp + %d]\n", a);
 	fprintf(fpasm, "\tpush dword eax\n");
 }
