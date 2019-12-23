@@ -249,7 +249,7 @@ condicional: if_exp_sentencias TOK_LLAVEDERECHA {
 }
 ;
 
-if_exp: TOK_IF TOK_PARENTESISIZQUIERDO comparacion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA 
+if_exp: TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA 
 {
   	if($3.tipo != BOOLEANO){
 		return yyerror("Condicional sin booleanos");
@@ -279,7 +279,7 @@ while: TOK_WHILE TOK_PARENTESISIZQUIERDO
   while_inicio(yyout, $$.valor);
 };
 
-while_exp: while comparacion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA 
+while_exp: while exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA 
 {
   if($2.tipo != BOOLEANO){
 	  return yyerror("Salida de while debe ser booleano");
@@ -359,6 +359,7 @@ exp: exp TOK_MAS exp
 	
 		cambiar_signo(yyout, $2.es_var);
 		$$.tipo = ENTERO;
+		$$.es_var = FALSE;
 	}
 	| exp TOK_AND exp 
 	{
@@ -408,11 +409,11 @@ exp: exp TOK_MAS exp
 		escribir_operando(yyout, $1.lexema, FALSE);
 	}
 	| TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO {fprintf(out, ";R82:\t<exp> ::= ( <exp> )\n");$$.tipo = $2.tipo; $$.es_var = $2.es_var;}
-	| TOK_PARENTESISIZQUIERDO comparacion TOK_PARENTESISDERECHO 
+	| comparacion 
 	{
 		fprintf(out, ";R83:\t<exp> ::= ( <comparacion> )\n");
 		$$.tipo = BOOLEANO;
-		$2.es_var = FALSE;
+		$$.es_var = FALSE;
 	}
 	| elemento_vector {fprintf(out, ";R85:\t<exp> ::= <elemento_vector>\n");}
 	| identificador TOK_PARENTESISIZQUIERDO lista_expresiones TOK_PARENTESISDERECHO {fprintf(out, ";R88:\t<exp> ::= <identificaor> ( <lista_expresiones> )\n");}

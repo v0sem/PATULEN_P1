@@ -1,19 +1,12 @@
 main
 {
-    int x, y;
-
-    function int foo(int i){
-        int e;
-        e = i + 2;
-        return e;
-    }
-
-    scanf x;
-    y = 1;
-    while(x>1) {
-        y = x * y;
-        x = x - 1;
-    }
-
-    printf y;
+    array int[3] vector1;
+	
+	vector1[0]=10;
+	vector1[1]=20;
+	vector1[2]=30;
+	
+	printf vector1[0];
+	printf vector1[1];
+	printf vector1[2];
 }
