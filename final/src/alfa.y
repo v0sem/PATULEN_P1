@@ -80,6 +80,8 @@
 %type <atributos> bucle
 %type <atributos> while
 %type <atributos> while_exp
+%type <atributos> clase_vector
+%type <atributos> elemento_vector
 %type <atributos> fn_declaration
 %type <atributos> fn_name
 
@@ -136,7 +138,7 @@ tipo: TOK_INT {fprintf(out, ";R10:\t<tipo> ::= int\n"); cur_type = ENTERO;}
 ;
 clase_vector: TOK_ARRAY tipo TOK_CORCHETEIZQUIERDO constante_entera TOK_CORCHETEDERECHO 
 {
-	fprintf(out, ";R15:\t<clase_vector> ::= array <tipo> [<constante_entera>]\n");
+	fprintf(out, ";R15:\t<clase_vector> ::= array <tipo> [ <constante_entera> ]\n");
 	if($4.valor > MAX_V || $4.valor <= 0){
 		return yyerror("Vector fuera de límites (1, 64)");
 	}
@@ -238,9 +240,27 @@ asignacion: identificador TOK_ASIGNACION exp
 	}
 	asignar(yyout, $1.lexema, $3.es_var);
 }
-	| elemento_vector TOK_ASIGNACION exp {fprintf(out, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");}
+	| elemento_vector TOK_ASIGNACION exp {
+		fprintf(out, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");
+		elem = TS_buscarElemento(t_simb, $1.lexema);
+		char *aux = (char*)malloc(1);
+		aux[0] = (char)($1.valor + 48);
+		escribir_operando(yyout, aux, 0);
+		printf("%d\n", elem->adicional1);
+  		escribir_elemento_vector(yyout, $1.lexema, elem->adicional1, $3.es_var);
+  		asignarDestinoEnPila(yyout, $3.es_var);
+	}
 ;
-elemento_vector: identificador TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO {fprintf(out, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n");}
+elemento_vector: identificador TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO {
+	fprintf(out, ";R48:\t<elemento_vector> ::= <identificador> [ <exp> ]\n");
+	elem = TS_buscarElemento(t_simb, $1.lexema);
+	// Sintesis
+	$$.valor = atoi($3.lexema);
+	$$.tipo = elem->tipo;
+	$$.es_var = TRUE;
+	printf("%d\n", elem->adicional1);
+	escribir_elemento_vector(yyout, $1.lexema, elem->adicional1, $3.es_var);
+}
 ;
 condicional: if_exp_sentencias TOK_LLAVEDERECHA {
 	ifthenelse_fin(yyout, $1.valor); }
@@ -415,7 +435,10 @@ exp: exp TOK_MAS exp
 		$$.tipo = BOOLEANO;
 		$$.es_var = FALSE;
 	}
-	| elemento_vector {fprintf(out, ";R85:\t<exp> ::= <elemento_vector>\n");}
+	| elemento_vector {
+		fprintf(out, ";R85:\t<exp> ::= <elemento_vector>\n");
+		$$.tipo = $1.tipo;
+	}
 	| identificador TOK_PARENTESISIZQUIERDO lista_expresiones TOK_PARENTESISDERECHO {fprintf(out, ";R88:\t<exp> ::= <identificaor> ( <lista_expresiones> )\n");}
 ;
 lista_expresiones: exp resto_lista_expresiones 
@@ -526,7 +549,7 @@ identificador: TOK_IDENTIFICADOR
 	fprintf(out, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
 
 	if(declar == TRUE){
-		if(TS_insertarElemento(t_simb, $1.lexema, 0, cur_cat, 	cur_type, cur_class) == ERR){
+		if(TS_insertarElemento(t_simb, $1.lexema, tam, cur_cat, 	cur_type, cur_class) == ERR){
 			return yyerror("Error al insertar un simbolo variable global");
 		}
 

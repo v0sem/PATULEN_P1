@@ -1,12 +1,25 @@
 main
 {
-    array int[3] vector1;
+    int x, y, resultado;
+
+	function int suma (int num1; int num2)
+	{
+		return num1+num2;
+	}
+
+    x = 1;
+	y = 3;
 	
-	vector1[0]=10;
-	vector1[1]=20;
-	vector1[2]=30;
+	resultado = suma (x,y);
+	printf resultado;
 	
-	printf vector1[0];
-	printf vector1[1];
-	printf vector1[2];
+	resultado = suma (x,1);
+	printf resultado;
+	
+	resultado = suma (10,y);
+	printf resultado;
+
+	resultado = suma (3,5);
+	printf resultado;	
+	
 }
