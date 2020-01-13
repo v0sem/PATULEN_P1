@@ -1,0 +1,7 @@
+************************************************************************************************
+Pablo Sanchez Redondo, David Palomo Marcos
+
+- Para compilar un programa ".alfa", colocarlo en la carpeta "input" y ejecutar "make"
+- Los ".asm" generados aparecen en la carpeta "output"
+- Los ejecutables se crean en la carpeta "compiled"
+************************************************************************************************

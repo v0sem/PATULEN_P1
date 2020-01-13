@@ -1,44 +1,39 @@
 IDIR=include
-ODIR=obj
+ODIR=${CURDIR}
 SDIR=src
 CC=gcc
-CFLAGS= -g -Wall
+CFLAGS= -g
 prg=main
 
 _FILES=tablaHash tablaSimbolos generacion y.tab
-
-
-DEPS = $(patsubst %,$(IDIR)/%.h,$(_FILES)) 
-
+DEPS = $(patsubst %,$(IDIR)/%.h,$(_FILES))
 OBJ = $(patsubst %,$(ODIR)/%.o,$(_FILES)) $(ODIR)/lex.yy.o
 
-all:
+all: bisep alfa clear instr run
+
+instr:
+	cat leeme.txt
+
+bisep:
 	bison -dyv $(SDIR)/alfa.y
 	lex $(SDIR)/alfa.l
 	mv *.c $(SDIR)
 	mv *.h $(IDIR)
-	$(MAKE) alfa
-
+	
 alfa: $(OBJ) $(ODIR)/main.o
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
-
-asm:
-	#valgrind --leak-check=full --show-leak-kinds=all ./alfa $(prg).alf $(prg).asm
-	./alfa $(prg).alf $(prg).asm
-	nasm -felf32 $(prg).asm
-	mv $(prg).o $(ODIR)/$(prg).o
-	gcc -m32 -o $(prg) $(ODIR)/$(prg).o lib/alfalib.o
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-zip:
-	zip -r GomezJavier_LiCarlos_compilador.zip includes obj src Makefile README
+run:
+	sh run.sh
 
 .PHONY: clean
 
 clean:
-	-rm $(OBJ) $(IDIR)/y.tab.h 
-	-rm $(SDIR)/lex.yy.c $(SDIR)/y.tab.c $(ODIR)/$(prg).o 
-	-rm  -rf $(ODIR)/*.o
-	-rm y.output alfa *.asm sintactico.txt
+	-rm $(IDIR)/y.tab.h $(SDIR)/lex.yy.c $(SDIR)/y.tab.c y.output alfa sintactico.txt
+	-rm compiled/* output/*
+
+clear:
+	-rm *.o

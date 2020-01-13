@@ -58,6 +58,7 @@ void escribir_segmento_codigo(FILE *fpasm) {
 								 "print_int, scan_float, print_float, scan_boolean, "
 								 "print_boolean, print_endofline, print_blank, "
 								 "print_string, alfa_malloc, alfa_free, ld_float\n");
+	fprintf(fpasm, "\tjmp near main\n\n");
 }
 
 void escribir_inicio_main(FILE *fpasm) {

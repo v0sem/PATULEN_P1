@@ -1,0 +1,21 @@
+main
+{
+    int x, y, resultado;
+
+	function int suma (int a)
+	{
+		return 1;
+	}
+
+    x = 1;
+	y = 3;
+	
+	resultado = suma (x);
+	printf resultado;	
+	
+}
+
+
+
+
+

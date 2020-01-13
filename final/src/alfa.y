@@ -449,15 +449,21 @@ exp: exp TOK_MAS exp
 		fprintf(out, ";R85:\t<exp> ::= <elemento_vector>\n");
 		$$.tipo = $1.tipo;
 	}
-	| identificador TOK_PARENTESISIZQUIERDO lista_expresiones TOK_PARENTESISDERECHO {fprintf(out, ";R88:\t<exp> ::= <identificaor> ( <lista_expresiones> )\n");}
+	| identificador TOK_PARENTESISIZQUIERDO lista_expresiones TOK_PARENTESISDERECHO {
+		elem = TS_buscarElemento(t_simb, $1.lexema);
+		if(elem->categoria == FUNCION){
+			llamarFuncion(yyout, $1.lexema, elem->adicional1);
+		}
+		else {
+			return yyerror("Not a valid function");
+		}
+		fprintf(out, ";R88:\t<exp> ::= <identificador> ( <lista_expresiones> )\n");
+		$$.es_var = FALSE;
+	}
 ;
 lista_expresiones: exp resto_lista_expresiones 
 {
 	fprintf(out, ";R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");
-	elem = TS_buscarElemento(t_simb, $1.lexema);
-	if(elem->categoria == FUNCION){
-		llamarFuncion(yyout, $1.lexema, elem->adicional1);
-	}
 }
 	| {fprintf(out, ";R90:\t<lista_expresiones> ::=\n");}
 ;
